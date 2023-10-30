@@ -1,0 +1,32 @@
+# Build the manager binary
+FROM golang:1.21 as builder
+ARG TARGETOS
+ARG TARGETARCH
+
+ENV CGO_ENABLED=0        \
+    GOOS=linux           \
+	GOPROXY="https://goproxy.cn,direct" \
+	GO111MODULE=on
+
+WORKDIR /build
+
+COPY . .
+
+RUN go mod download
+
+RUN  go build -ldflags="-s -w" -o agent cmd/gateway/main.go
+
+# running container
+
+FROM openresty/openresty
+
+ENV TZ=Asia/Shanghai
+
+WORKDIR /agent
+
+COPY --from=builder /build/agent .
+COPY --from=builder /build/nginx ./nginx
+
+EXPOSE 80
+
+ENTRYPOINT ["./agent"]

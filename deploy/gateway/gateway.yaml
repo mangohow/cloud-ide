@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cloud-ide-gateway
+    apps: cloud-ide
+  name: cloud-ide-gateway
+  namespace: cloud-ide
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-ide-gateway
+  template:
+    metadata:
+      labels:
+        app: cloud-ide-gateway
+    spec:
+      containers:
+        - image: cloud-ide-gateway:v1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - -workers
+            - "2"
+            - -conns-per-worker
+            - "2048"
+            - -shared-dict-size
+            - "16m"
+            - -nginx-conf-path
+            - "/usr/local/openresty/nginx/conf"
+            - -endpoint-token
+            - "XnRbVnoUZa0rT9xKAwHX0Zof3H7VpfCe"
+            - -debug
+            - "enabled"
+            - -server-crt
+            - "/etc/openresty/cert/tls.crt"
+            - -server-key
+            - "/etc/openresty/cert/tls.key"
+          name: cloud-ide-gateway
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "128Mi"
+            limits:
+              cpu: "2"
+              memory: "512Mi"
+          volumeMounts:
+            - mountPath: "/etc/openresty/cert"
+              name: secret
+              readOnly: true
+      volumes:
+        - name: secret
+          secret:
+            secretName: cloud-ide-gateway-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cloud-ide-gateway-svc
+    apps: cloud-ide
+  name: cloud-ide-gateway-svc
+  namespace: cloud-ide
+spec:
+  selector:
+    app: cloud-ide-gateway
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      name: https
+      nodePort: 30443
+  type: NodePort
+
