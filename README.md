@@ -11,24 +11,28 @@ Cloud IDE is a multi-user cloud-based Integrated Development Environment (IDE) m
 - **Workspace Management:** Cloud IDE offers workspace management capabilities, allowing users to create and manage their projects easily.
 
 
-## implementation
+## Implementation
 
-| Technology stack | Description                                                                  |
-|------------------|------------------------------------------------------------------------------|
-| Kubernetes       | Container orchestration platform for managing and scaling cloud applications |
-| Docker           | Containerization platform for build docker images                            |
-| Code-Server      | VS Code in the browser, powered by VS Code Server                            |
-| OpenResty        | Service discovery and reverse proxy for workspace and web server reverse proxy                                       |
-| Kubebuilder      | Framework for building Kubernetes APIs and controllers                       |
-| Gin              | Web framework for building API servers in Go                                 |
-| gRPC             | High-performance, open-source framework for remote procedure calls           |
-| MySQL            | Relational database management system                                        |
-| Vue              | JavaScript framework for building user interfaces                            |
+| Technology stack | Description                                                                    |
+|------------------|--------------------------------------------------------------------------------|
+| Kubernetes       | Container orchestration platform for managing and scaling cloud applications   |
+| Docker           | Containerization platform for build docker images                              |
+| Code-Server      | VS Code in the browser, powered by VS Code Server                              |
+| OpenResty        | Service discovery and reverse proxy for workspace and web server reverse proxy |
+| Lua              | Used to write service discovery and reverse proxies in Openresty               |
+| Kubebuilder      | Framework for building Kubernetes APIs and controllers                         |
+| Go               | The primary language used for the Cloud IDE platform                                                            |
+| Gin              | Web framework for building API servers in Go                                   |
+| gRPC             | High-performance, open-source framework for remote procedure calls             |
+| MySQL            | Relational database management system                                          |
+| NFS              | For persisting data, such as mysql data, workspace code, and plugins           |
+| NFS-CSI-Driver   | Used for automatic PV preparation                                              |
+| Vue              | JavaScript framework for building user interfaces                              |
 
 ## Architecture
 ![img.png](docs/images/architecture.png)
 
-## DISPLAY
+## Display
 `Login View：`
 ![img.png](docs/images/login-view.png)
 
