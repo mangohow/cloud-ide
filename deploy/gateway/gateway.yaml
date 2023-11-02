@@ -20,21 +20,21 @@ spec:
         - image: cloud-ide-gateway:v1.0
           imagePullPolicy: IfNotPresent
           args:
-            - -workers
+            - -workers                 # 指定nginx的worker数量
             - "2"
-            - -conns-per-worker
+            - -conns-per-worker        # 指定每个worker的最大连接数
             - "2048"
-            - -shared-dict-size
+            - -shared-dict-size        # 共享内存大小
             - "16m"
-            - -nginx-conf-path
+            - -nginx-conf-path         # 配置文件路径
             - "/usr/local/openresty/nginx/conf"
-            - -endpoint-token
+            - -endpoint-token          # 服务发现的token
             - "XnRbVnoUZa0rT9xKAwHX0Zof3H7VpfCe"
-            - -debug
-            - "enabled"
-            - -server-crt
+            - -debug                   # 开启debug接口
+            - "disabled"
+            - -server-crt              # https证书
             - "/etc/openresty/cert/tls.crt"
-            - -server-key
+            - -server-key              # https key
             - "/etc/openresty/cert/tls.key"
           name: cloud-ide-gateway
           resources:
