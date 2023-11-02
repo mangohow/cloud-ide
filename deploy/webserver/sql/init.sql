@@ -67,7 +67,7 @@ CREATE TABLE `t_space_template`  (
 -- ----------------------------
 -- Records of t_space_template
 -- ----------------------------
-INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go1.21:v1.0', 0, 'images/go.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
+INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go1.19:v1.1', 0, 'images/go.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
 INSERT INTO `t_space_template` VALUES (2, 1, 'Node.js', 'js workspace', 'Node.js', 'node.js', 0, 'images/nodejs.png', '2022-12-11 21:18:22', '2022-12-11 21:18:24');
 INSERT INTO `t_space_template` VALUES (3, 1, 'C/C++', 'c/c++ workspace with gcc g++ make cmake git', 'C,CPP,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-cpp:v1.1', 0, 'images/cpp.png', '2022-12-11 22:40:28', '2022-12-11 22:40:30');
 INSERT INTO `t_space_template` VALUES (4, 1, 'Java', 'java workspace', 'Java', 'java', 0, 'images/java.png', '2023-02-26 16:56:43', '2023-02-26 16:57:33');
@@ -136,8 +136,5 @@ CREATE TABLE `t_user`  (
 -- ----------------------------
 -- Records of t_user
 -- ----------------------------
-INSERT INTO `t_user` VALUES (1, '6396bfe39d5e742ee4ac9e9d', 'rootroot', '63a9f0ea7bb98050796b649e85481845', '管理猿', '1158446387@qq.com', '11111111111', 'https://i.hd-r.cn/1886c6be30ff4770f0489f4153c11ada.png', '2022-12-08 16:01:02', '2022-12-08 16:01:04', 0);
-INSERT INTO `t_user` VALUES (6, '63eb18e49d5e7437cca0be8d', 'admintest', '66d4aaa5ea177ac32c69946de3731ec0', 'admintest', '212050120@hdu.edu.cn', '', 'https://i.hd-r.cn/1886c6be30ff4770f0489f4153c11ada.png', '2023-02-14 13:15:17', '2023-02-14 13:15:17', 0);
-INSERT INTO `t_user` VALUES (7, '640088fa31a614000114c001', 'mangohow', '15eb7aa945c3a41d231f0e70eecc9e0b', '程序猿啊啊', 'mghgyf@qq.com', '', '', '2023-03-02 11:31:06', '2023-03-02 11:31:06', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
