@@ -81,6 +81,9 @@ kubectl create -f .
 #### step4: deploy gateway
 ```sh
 # make sure you are in deploy/gateway
+# generate the nginx https certificate and key
+./generate.sh
+# deploy gateway
 kubectl create -f .
 ```
 
