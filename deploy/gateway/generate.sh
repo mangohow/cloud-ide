@@ -18,9 +18,9 @@ echo "证书文件：$CERT_FILE"
 echo "密钥文件：$KEY_FILE"
 
 
-kubectl create configmap $CONFIGMAP_NAME \
-  --from-file=$CERT_FILE \
-  --from-file=$KEY_FILE \
+kubectl create secret tls $CONFIGMAP_NAME \
+  --cert=$CERT_FILE \
+  --key=$KEY_FILE \
   --namespace=$NAMESPACE
 
 rm -f $CERT_FILE $KEY_FILE
