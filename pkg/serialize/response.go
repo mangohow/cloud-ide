@@ -51,24 +51,39 @@ func NewResponse(status, code int, data interface{}, message string) *Response {
 	return res
 }
 
-func Ok(data interface{}) *Response {
+func Ok() *Response {
+	return NewResponse(http.StatusOK, SuccessCode, nil, "success")
+}
+
+func OkData(data interface{}) *Response {
 	return NewResponse(http.StatusOK, SuccessCode, data, "success")
 }
 
-func Fail(code int) *Response {
-	return FailWithData(code, nil)
+func OkCode(code int) *Response {
+	if cm != nil {
+		return NewResponse(http.StatusOK, code, nil, cm(code))
+	}
+	return NewResponse(http.StatusOK, code, nil, "success")
 }
 
-func FailWithData(code int, data interface{}) *Response {
+func OkCodeData(code int, data interface{}) *Response {
+	if cm != nil {
+		return NewResponse(http.StatusOK, code, data, cm(code))
+	}
+	return NewResponse(http.StatusOK, code, data, "success")
+}
+
+func Fail(code int) *Response {
+	return FailData(code, nil)
+}
+
+func FailData(code int, data interface{}) *Response {
 	if cm != nil {
 		return NewResponse(http.StatusOK, code, data, cm(code))
 	}
 	return NewResponse(http.StatusOK, FailCode, data, "failed")
 }
 
-func Error(status int, code int) *Response {
-	if cm != nil {
-		return NewResponse(status, code, nil, cm(code))
-	}
+func Error(status int) *Response {
 	return NewResponse(status, ErrorCode, nil, "error")
 }

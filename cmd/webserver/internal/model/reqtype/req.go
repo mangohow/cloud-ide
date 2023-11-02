@@ -7,3 +7,7 @@ type SpaceCreateOption struct {
 	UserId        uint32 `json:"user_id"`
 	GitRepository string `json:"git_repository"`
 }
+
+type SpaceId struct {
+	Id uint32 `json:"id"`
+}

@@ -20,17 +20,18 @@ spec:
       containers:
       - name: web
         image: cloud-ide-webserver:v1.0
+        imagePullPolicy: IfNotPresent
         args:
           - -mode              # 指定运行模式
-          - release
+          - "dev"
           - -mysql-datasource  # 指定mysql datasource
-          - root:123456@(cloud-ide-mysql-svc:3306)/cloudcode?charset=utf8mb4&parseTime=true&loc=Local
+          - "root:123456@(cloud-ide-mysql-svc:3306)/cloudide?charset=utf8mb4&parseTime=true&loc=Local"
           - -log-level         # 指定日志等级
-          - error
+          - "debug"
           - -email-enabled     # 是否启动email注册验证
-          - disabled
-          - grpc-addr          # 指定grpc地址，即control-plane的service和port
-          - cloud-ide-control-plane-svc:6387
+          - "disabled"
+          - -grpc-addr          # 指定grpc地址，即control-plane的service和port
+          - "cloud-ide-control-plane-svc:6387"
         ports:
         - containerPort: 8088
         resources:

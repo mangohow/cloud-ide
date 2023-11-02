@@ -3,7 +3,7 @@ package code
 import "github.com/mangohow/cloud-ide/pkg/serialize"
 
 const (
-	QuerySuccess = iota
+	QuerySuccess = iota + 10
 	QueryFailed
 
 	LoginSuccess

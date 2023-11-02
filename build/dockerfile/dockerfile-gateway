@@ -1,4 +1,16 @@
-# Build the manager binary
+# build front end project
+FROM node:16 as vuebuilder
+
+WORKDIR /build
+
+COPY front-end .
+
+RUN yarn config set registry https://registry.npm.taobao.org
+
+RUN yarn install
+RUN yarn build
+
+# build agent
 FROM golang:1.21 as builder
 ARG TARGETOS
 ARG TARGETARCH
@@ -16,16 +28,22 @@ RUN go mod download
 
 RUN  go build -ldflags="-s -w" -o agent cmd/gateway/main.go
 
-# running container
 
+# running container
 FROM openresty/openresty
 
 ENV TZ=Asia/Shanghai
 
 WORKDIR /agent
 
+# copy static resources
+COPY --from=vuebuilder /build/dist /usr/local/openresty/nginx/html
+COPY --from=vuebuilder /build/src/assets/images /usr/local/openresty/nginx/html/images
+
+# copy agent and nginx conf
 COPY --from=builder /build/agent .
-COPY --from=builder /build/nginx ./nginx
+COPY --from=builder /build/config/nginx ./nginx
+
 
 EXPOSE 80
 

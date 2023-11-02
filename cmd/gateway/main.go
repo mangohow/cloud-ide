@@ -27,6 +27,8 @@ var (
 	token             string
 	serverCrt         string
 	serverKey         string
+	webSvcName        string
+	webPort           int
 )
 
 func main() {
@@ -66,6 +68,8 @@ func parseFlags(gomaxprocs int) (*tmpl.Config, error) {
 	flag.StringVar(&token, "endpoint-token", "", "specify endpoint token")
 	flag.StringVar(&serverCrt, "server-crt", "", "specify ssl certificate")
 	flag.StringVar(&serverKey, "server-key", "", "specify ssl certificate key")
+	flag.StringVar(&webSvcName, "web-service-name", "cloud-ide-web-svc.cloud-ide.svc.cluster.local", "specify the service of the web to reverse proxy, fully qualified domain names must be written")
+	flag.IntVar(&webPort, "web-port", 8088, "specify the port of the web to reverse proxy")
 	flag.Parse()
 
 	cfg := &tmpl.Config{}
@@ -122,6 +126,9 @@ func parseFlags(gomaxprocs int) (*tmpl.Config, error) {
 		return nil, errors.New("must specify endpoint token")
 	}
 	cfg.Token = token
+
+	cfg.WebServiceName = webSvcName
+	cfg.WebPort = webPort
 
 	return cfg, nil
 }

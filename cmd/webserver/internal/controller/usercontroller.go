@@ -54,21 +54,21 @@ func (u *UserController) Login(ctx *gin.Context) *serialize.Response {
 
 	u.logger.Debugf("username:%s passowrd:%s", userInfo.Username, userInfo.Password)
 	if userInfo.Username == "" || userInfo.Password == "" {
-		return serialize.FailWithData(code.LoginFailed, nil)
+		return serialize.FailData(code.LoginFailed, nil)
 	}
 	u.logger.Debugf("username:%s, pasword:%s", userInfo.Username, userInfo.Password)
 
 	user, err := u.service.Login(userInfo.Username, userInfo.Password)
 	if err != nil {
 		if err == service.ErrUserDeleted {
-			return serialize.FailWithData(code.LoginUserDeleted, nil)
+			return serialize.Fail(code.LoginUserDeleted)
 		}
 
 		u.logger.Warnf("login error:%v", err)
-		return serialize.FailWithData(code.LoginFailed, nil)
+		return serialize.Fail(code.LoginFailed)
 	}
 
-	return serialize.FailWithData(code.LoginSuccess, user)
+	return serialize.OkData(user)
 }
 
 // Register 用户注册 method: POST path: /auth/register
@@ -76,8 +76,7 @@ func (u *UserController) Register(ctx *gin.Context) *serialize.Response {
 	var info model.RegisterInfo
 	err := ctx.ShouldBind(&info)
 	if err != nil {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 	u.logger.Debug("register", info)
 	// 验证EmailCode长度
@@ -97,36 +96,34 @@ func (u *UserController) Register(ctx *gin.Context) *serialize.Response {
 	case service.ErrEmailAlreadyInUse:
 		return serialize.Fail(code.UserEmailAlreadyInUse)
 	case nil:
-		return serialize.Fail(code.UserRegisterSuccess)
+		return serialize.Ok()
 	}
 
 	u.logger.Debugf("add user err:%v", err)
 	return serialize.Fail(code.UserRegisterFailed)
 }
 
-// CheckUsernameAvailable 检测用户名是否可用 method: GET path: /auth/uname_available
+// CheckUsernameAvailable 检测用户名是否可用 method: GET path: /auth/username/check
 func (u *UserController) CheckUsernameAvailable(ctx *gin.Context) *serialize.Response {
 	u.logger.Debugf("check username available")
 	value := ctx.Query("username")
 	if value == "" {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
 	ok := u.service.CheckUsernameAvailable(value)
 	if !ok {
-		return serialize.Fail(code.UserNameAvailable)
+		return serialize.Ok()
 	}
 
 	return serialize.Fail(code.UserNameUnavailable)
 }
 
-// GetEmailValidateCode 通过邮箱获取验证码 method: GET path: /auth/validate_code
+// GetEmailValidateCode 通过邮箱获取验证码 method: GET path: /auth/emailCode
 func (u *UserController) GetEmailValidateCode(ctx *gin.Context) *serialize.Response {
 	addr := ctx.Query("email")
 	if addr == "" {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
 	err := u.emailService.Send(addr)
@@ -134,5 +131,5 @@ func (u *UserController) GetEmailValidateCode(ctx *gin.Context) *serialize.Respo
 		return serialize.Fail(code.UserSendValidateCodeFailed)
 	}
 
-	return serialize.Fail(code.UserSendValidateCodeSuccess)
+	return serialize.Ok()
 }

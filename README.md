@@ -1,80 +1,51 @@
-# cloud-ide-k8s-operator
-// TODO(user): Add simple overview of use/purpose
+# Cloud IDE
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+Cloud IDE is a multi-user cloud-based Integrated Development Environment (IDE) management system built on Kubernetes and VS Code Server. It allows you to create and access a VS Code instance in the cloud using a web browser.
 
-## Getting Started
-You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
-**Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
+## Features
 
-### Running on the cluster
-1. Install Instances of Custom Resources:
+- **Multi-user Support:** Cloud IDE provides a multi-user environment where each user can have their own isolated workspace.
+- **Browser Access:** Users can access their IDEs through a web browser, eliminating the need for local installations.
+- **VS Code Integration:** Cloud IDE leverages the power of VS Code, providing a rich set of features for code editing, debugging, and extensions.
+- **Cloud-based:** The IDE instances are hosted in the cloud, ensuring scalability, availability, and flexibility.
+- **Workspace Management:** Cloud IDE offers workspace management capabilities, allowing users to create and manage their projects easily.
 
-```sh
-kubectl apply -f config/samples/
-```
 
-2. Build and push your image to the location specified by `IMG`:
-	
-```sh
-make docker-build docker-push IMG=<some-registry>/cloud-ide-k8s-operator:tag
-```
-	
-3. Deploy the controller to the cluster with the image specified by `IMG`:
+## implementation
 
-```sh
-make deploy IMG=<some-registry>/cloud-ide-k8s-operator:tag
-```
+| Technology stack | Description                                                                  |
+|------------------|------------------------------------------------------------------------------|
+| Kubernetes       | Container orchestration platform for managing and scaling cloud applications |
+| Docker           | Containerization platform for build docker images                            |
+| Code-Server      | VS Code in the browser, powered by VS Code Server                            |
+| OpenResty        | Service discovery and reverse proxy for workspace and web server reverse proxy                                       |
+| Kubebuilder      | Framework for building Kubernetes APIs and controllers                       |
+| Gin              | Web framework for building API servers in Go                                 |
+| gRPC             | High-performance, open-source framework for remote procedure calls           |
+| MySQL            | Relational database management system                                        |
+| Vue              | JavaScript framework for building user interfaces                            |
 
-### Uninstall CRDs
-To delete the CRDs from the cluster:
+## Architecture
+![img.png](docs/images/architecture.png)
 
-```sh
-make uninstall
-```
+## DISPLAY
+`Login View：`
+![img.png](docs/images/login-view.png)
 
-### Undeploy controller
-UnDeploy the controller to the cluster:
+`Workspace Template View:`
+![img.png](docs/images/template-view.png)
 
-```sh
-make undeploy
-```
+`Workspace View`
+![img.png](docs/images/workspace-view.png)
 
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
 
-### How it works
-This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+`IDE view`
+![img.png](docs/images/ide-view.png)
 
-It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) 
-which provides a reconcile function responsible for synchronizing resources untile the desired state is reached on the cluster 
+## Deployment
 
-### Test It Out
-1. Install the CRDs into the cluster:
+see [Deployment Guide](deploy/README.md).
 
-```sh
-make install
-```
-
-2. Run your controller (this will run in the foreground, so switch to a new terminal if you want to leave it running):
-
-```sh
-make run
-```
-
-**NOTE:** You can also run this in one step by running: `make install run`
-
-### Modifying the API definitions
-If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
-
-```sh
-make manifests
-```
-
-**NOTE:** Run `make --help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
 
 ## License
 
@@ -91,4 +62,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-

@@ -14,7 +14,9 @@
  Date: 30/10/2023 22:50:15
 */
 
-CREATE DATABASE cloudcode CHARACTER SET utf8mb4;
+CREATE DATABASE cloudide CHARACTER SET utf8mb4;
+USE cloudide;
+
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -65,12 +67,12 @@ CREATE TABLE `t_space_template`  (
 -- ----------------------------
 -- Records of t_space_template
 -- ----------------------------
-INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go1.21:v1.0', 0, 'https://i.hd-r.cn/a868c256daf5366d762306ac633492d8.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
-INSERT INTO `t_space_template` VALUES (2, 1, 'Node.js', 'js workspace', 'Node.js', 'node.js', 0, 'https://i.hd-r.cn/d49118983c549b69b483a9822f18d27d.png', '2022-12-11 21:18:22', '2022-12-11 21:18:24');
-INSERT INTO `t_space_template` VALUES (3, 1, 'C/C++', 'c/c++ workspace with gcc g++ make cmake git', 'C,CPP,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-cpp:v1.1', 0, 'https://i.hd-r.cn/3c294f89c08aa1ba11b238a6d4fcd226.png', '2022-12-11 22:40:28', '2022-12-11 22:40:30');
-INSERT INTO `t_space_template` VALUES (4, 1, 'Java', 'java workspace', 'Java', 'java', 0, 'https://i.hd-r.cn/707fbb6ef9fb48ee740c21707bd82852.png', '2023-02-26 16:56:43', '2023-02-26 16:57:33');
-INSERT INTO `t_space_template` VALUES (5, 1, 'Vue', 'Vue workspace', 'Vue,Yarn', 'Vue', 0, 'https://i.hd-r.cn/6a33bc133fd745215defeef49175e1b5.png', '2023-02-26 17:05:18', '2023-02-26 17:05:20');
-INSERT INTO `t_space_template` VALUES (6, 1, 'Python', 'python workspace', 'Python', 'Python', 0, 'https://i.hd-r.cn/acdbacbc9597ffe7c16aa6a8b3ee576d.png', '2023-02-26 17:05:45', '2023-02-26 17:05:48');
+INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go1.21:v1.0', 0, 'images/go.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
+INSERT INTO `t_space_template` VALUES (2, 1, 'Node.js', 'js workspace', 'Node.js', 'node.js', 0, 'images/nodejs.png', '2022-12-11 21:18:22', '2022-12-11 21:18:24');
+INSERT INTO `t_space_template` VALUES (3, 1, 'C/C++', 'c/c++ workspace with gcc g++ make cmake git', 'C,CPP,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-cpp:v1.1', 0, 'images/cpp.png', '2022-12-11 22:40:28', '2022-12-11 22:40:30');
+INSERT INTO `t_space_template` VALUES (4, 1, 'Java', 'java workspace', 'Java', 'java', 0, 'images/java.png', '2023-02-26 16:56:43', '2023-02-26 16:57:33');
+INSERT INTO `t_space_template` VALUES (5, 1, 'Vue', 'Vue workspace', 'Vue,Yarn', 'Vue', 0, 'images/vue.png', '2023-02-26 17:05:18', '2023-02-26 17:05:20');
+INSERT INTO `t_space_template` VALUES (6, 1, 'Python', 'python workspace', 'Python', 'Python', 0, 'images/python.png', '2023-02-26 17:05:45', '2023-02-26 17:05:48');
 
 -- ----------------------------
 -- Table structure for t_spacespec

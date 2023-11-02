@@ -34,9 +34,9 @@ http {
 		ssl_session_timeout 5m;
 		ssl_protocols TLSv1.2 TLSv1.3;
 		ssl_session_cache shared:SSL:50m;
-        ssl_session_tickets off;
-        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
-        ssl_prefer_server_ciphers on;
+		ssl_session_tickets off;
+		ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+		ssl_prefer_server_ciphers on;
 
 
         # 静态资源配置
@@ -45,13 +45,15 @@ http {
             index index.html index.htm;
         }
 
+		resolver kube-dns.kube-system.svc.cluster.local valid=5s;
+
         {{ if not .Debug }}
         # web反向代理
         location /api {
 	        proxy_set_header Host $host;
 	        proxy_set_header X-Real-IP $remote_addr;
 	        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	        proxy_pass http://cloud-ide-web-svc:8088;
+	        proxy_pass http://{{.WebServiceName}}:{{.WebPort}};
         }
         {{ end }}
 
@@ -60,7 +62,7 @@ http {
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_pass http://cloud-ide-web-svc:8088;
+           proxy_pass http://{{.WebServiceName}}:{{.WebPort}};
         }
         {{ end }}
 

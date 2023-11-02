@@ -7,7 +7,7 @@ import (
 
 type Handler func(ctx *gin.Context) *serialize.Response
 
-func Decorate(h Handler) gin.HandlerFunc {
+func HandlerAdapter(h Handler) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		r := h(ctx)
 		if r != nil {

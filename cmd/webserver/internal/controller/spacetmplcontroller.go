@@ -26,10 +26,10 @@ func (s *SpaceTmplController) SpaceTmpls(ctx *gin.Context) *serialize.Response {
 	tmpls, kinds, err := s.service.GetAllUsingTmpl()
 	if err != nil {
 		s.logger.Warnf("get tmpls err:%v", err)
-		return serialize.Ok(code.QueryFailed)
+		return serialize.Fail(code.QueryFailed)
 	}
 
-	return serialize.FailWithData(code.QuerySuccess, gin.H{
+	return serialize.OkData(gin.H{
 		"tmpls": tmpls,
 		"kinds": kinds,
 	})
@@ -40,8 +40,8 @@ func (s *SpaceTmplController) SpaceSpecs(ctx *gin.Context) *serialize.Response {
 	specs, err := s.service.GetAllSpec()
 	if err != nil {
 		s.logger.Warnf("get specs error:%v", err)
-		return serialize.Ok(code.QueryFailed)
+		return serialize.Fail(code.QueryFailed)
 	}
 
-	return serialize.FailWithData(code.QuerySuccess, specs)
+	return serialize.OkData(specs)
 }

@@ -22,13 +22,13 @@ kind: Deployment
 metadata:
   labels:
     app: cloud-ide-mysql
+    apps: cloud-ide
   name: mysql
   namespace: cloud-ide
 spec:
   selector:
     matchLabels:
       app: cloud-ide-mysql
-      apps: cloud-ide
   template:
     metadata:
       labels:
@@ -45,11 +45,16 @@ spec:
         volumeMounts:
         - name: mysql-volume
           mountPath: /var/lib/mysql
+        - name: init-sql
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-volume
         # 使用pvc
         persistentVolumeClaim:
           claimName: cloud-ide-mysql-pvc
+      - name: init-sql           # 使用mysql初始化文件
+        configMap:
+          name: cloud-ide-mysql-init-sql
 
 
 
@@ -67,9 +72,8 @@ metadata:
 spec:
   selector:
     app: cloud-ide-mysql
-  type: NodePort
+  type: ClusterIP
   ports:
   - port: 3306
     protocol: TCP
     targetPort: 3306
-    nodePort: 30306

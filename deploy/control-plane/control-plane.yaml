@@ -22,14 +22,16 @@ spec:
         args:
           - -zap-log-level
           - "error"
-          - -mode
+          - -mode                        # 电脑配置低的情况下最好运行在dev模式，否则workspace会由于资源不足无法启动
           - "dev"
-          - -gateway-token               # 指定访问gateway去注册Workspace时的token
+          - -gateway-token               # 指定访问gateway注册Workspace时的token
           - "XnRbVnoUZa0rT9xKAwHX0Zof3H7VpfCe"
           - -gateway-path                # 指定gateway中注册Workspace的HTTPS路径
           - "/internal/endpoint"
           - -gateway-service             # 指定gateway的service名称
           - "cloud-ide-gateway-svc"
+          - -git-cloner-image            # 指定用于克隆git仓库的镜像
+          - "git-cloner:v1.0"
           - -storage-class-name
           - "nfs-csi"                    # 指定动态卷制备的StorageClassName
           - -dynamic-storage-enabled     # 开启动态卷制备
@@ -72,7 +74,6 @@ spec:
     - port: 6387
       protocol: TCP
       targetPort: 6387
-      nodePort: 32387
   selector:
     app: cloud-ide-control-plane
-  type: NodePort
+  type: ClusterIP

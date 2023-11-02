@@ -2,6 +2,7 @@ package logger
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -26,7 +27,13 @@ func InitLogger(conf conf.LoggerConf) error {
 	logger.SetFormatter(&LogFormatter{})
 	logger.SetOutput(os.Stdout)
 	out = os.Stdout
-	logger.SetLevel(logrus.DebugLevel)
+	if level, err := logrus.ParseLevel(conf.Level); err != nil {
+		fmt.Println("parse level error, use debug")
+		logger.SetLevel(logrus.DebugLevel)
+	} else {
+		logger.SetLevel(level)
+	}
+
 	logger.SetReportCaller(true)
 
 	if conf.ToFile {

@@ -17,6 +17,8 @@ type Config struct {
 	Token             string
 	ServerCrt         string
 	ServerKey         string
+	WebServiceName    string
+	WebPort           int
 }
 
 func ApplyNginxConf(cfg *Config, ngxPath string) error {
@@ -29,7 +31,7 @@ func ApplyNginxConf(cfg *Config, ngxPath string) error {
 }
 
 func applyTmpl(cfg *Config, ngxPath string) error {
-	tmpl, err := template.ParseFiles("config/nginx/nginx.tmpl")
+	tmpl, err := template.ParseFiles("nginx/nginx.tmpl")
 	if err != nil {
 		slog.Error("parse nginx file", "error", err)
 		return err
@@ -55,7 +57,7 @@ func applyTmpl(cfg *Config, ngxPath string) error {
 }
 
 func moveLuaFiles(ngxPath string) error {
-	cmd := exec.Command("cp", "-r", "config/nginx/lua", filepath.Join(ngxPath, "lua"))
+	cmd := exec.Command("cp", "-r", "nginx/lua", filepath.Join(ngxPath, "lua"))
 	res, err := cmd.CombinedOutput()
 	if err != nil {
 		slog.Error("move lua files", "error", res)

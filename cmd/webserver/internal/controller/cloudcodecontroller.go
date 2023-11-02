@@ -26,39 +26,36 @@ func NewCloudCodeController() *CloudCodeController {
 	}
 }
 
-// CreateSpace 创建一个云空间  method: POST path: /api/space
+// CreateSpace 创建一个云空间  method: POST path: /api/workspace
 // Request Param: reqtype.SpaceCreateOption
 func (c *CloudCodeController) CreateSpace(ctx *gin.Context) *serialize.Response {
 	// 1、用户参数获取和验证
 	req := c.creationCheck(ctx)
 	if req == nil {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
 	// 2、获取用户id，在token验证时已经解析出并放入ctx中了
-	idi, _ := ctx.Get("id")
-	id := idi.(uint32)
+	userId := utils.MustGet[uint32](ctx, "id")
 
 	// 3、调用service处理然后响应结果
-	space, err := c.spaceService.CreateWorkspace(req, id)
+	space, err := c.spaceService.CreateWorkspace(req, userId)
 	switch err {
 	case service.ErrNameDuplicate:
-		return serialize.Ok(code.SpaceCreateNameDuplicate)
+		return serialize.Fail(code.SpaceCreateNameDuplicate)
 	case service.ErrReachMaxSpaceCount:
-		return serialize.Ok(code.SpaceCreateReachMaxCount)
+		return serialize.Fail(code.SpaceCreateReachMaxCount)
 	case service.ErrSpaceCreate:
-		return serialize.Ok(code.SpaceCreateFailed)
+		return serialize.Fail(code.SpaceCreateFailed)
 	case service.ErrReqParamInvalid:
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
 	if err != nil {
-		return serialize.Ok(code.SpaceCreateFailed)
+		return serialize.Fail(code.SpaceCreateFailed)
 	}
 
-	return serialize.FailWithData(code.SpaceCreateSuccess, space)
+	return serialize.OkData(space)
 }
 
 // creationCheck 用户参数验证
@@ -104,162 +101,138 @@ func (c *CloudCodeController) creationCheck(ctx *gin.Context) *reqtype.SpaceCrea
 func (c *CloudCodeController) CreateSpaceAndStart(ctx *gin.Context) *serialize.Response {
 	req := c.creationCheck(ctx)
 	if req == nil {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
-	idi, _ := ctx.Get("id")
-	id := idi.(uint32)
-	uidi, _ := ctx.Get("uid")
-	uid := uidi.(string)
+	userId := utils.MustGet[uint32](ctx, "id")
+	uid := utils.MustGet[string](ctx, "uid")
 
-	space, err := c.spaceService.CreateAndStartWorkspace(req, id, uid)
+	space, err := c.spaceService.CreateAndStartWorkspace(req, userId, uid)
 	switch err {
 	case service.ErrNameDuplicate:
-		return serialize.Ok(code.SpaceCreateNameDuplicate)
+		return serialize.Fail(code.SpaceCreateNameDuplicate)
 	case service.ErrReachMaxSpaceCount:
-		return serialize.Ok(code.SpaceCreateReachMaxCount)
+		return serialize.Fail(code.SpaceCreateReachMaxCount)
 	case service.ErrSpaceCreate:
-		return serialize.Ok(code.SpaceCreateFailed)
+		return serialize.Fail(code.SpaceCreateFailed)
 	case service.ErrSpaceStart:
-		return serialize.Ok(code.SpaceStartFailed)
+		return serialize.Fail(code.SpaceStartFailed)
 	case service.ErrOtherSpaceIsRunning:
-		return serialize.Ok(code.SpaceOtherSpaceIsRunning)
+		return serialize.Fail(code.SpaceOtherSpaceIsRunning)
 	case service.ErrReqParamInvalid:
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	case service.ErrSpaceAlreadyExist:
-		return serialize.Ok(code.SpaceAlreadyExist)
+		return serialize.Fail(code.SpaceAlreadyExist)
 	case service.ErrResourceExhausted:
-		return serialize.Ok(code.ResourceExhausted)
+		return serialize.Fail(code.ResourceExhausted)
 	}
 
 	if err != nil {
-		return serialize.Ok(code.SpaceCreateFailed)
+		return serialize.Fail(code.SpaceCreateFailed)
 	}
 
-	return serialize.FailWithData(code.SpaceStartSuccess, space)
+	return serialize.OkData(space)
 }
 
-// StartSpace 启动一个已存在的云空间 method: POST path: /api/space_start
+// StartSpace 启动一个已存在的云空间 method: POST path: /api/workspace/start
 // request param: space id
 func (c *CloudCodeController) StartSpace(ctx *gin.Context) *serialize.Response {
-	var req struct {
-		Id uint32 `json:"id"`
-	}
+	var req reqtype.SpaceId
 	err := ctx.ShouldBind(&req)
 	if err != nil {
 		c.logger.Warnf("bind param error:%v", err)
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Error(http.StatusBadRequest)
 	}
 
-	idi, _ := ctx.Get("id")
-	id := idi.(uint32)
-	uidi, _ := ctx.Get("uid")
-	uid := uidi.(string)
+	userId := utils.MustGet[uint32](ctx, "id")
+	uid := utils.MustGet[string](ctx, "uid")
 
-	space, err := c.spaceService.StartWorkspace(req.Id, id, uid)
+	space, err := c.spaceService.StartWorkspace(req.Id, userId, uid)
 	switch err {
 	case service.ErrWorkSpaceNotExist:
-		return serialize.Ok(code.SpaceStartNotExist)
+		return serialize.Fail(code.SpaceStartNotExist)
 	case service.ErrSpaceStart:
-		return serialize.Ok(code.SpaceStartFailed)
+		return serialize.Fail(code.SpaceStartFailed)
 	case service.ErrOtherSpaceIsRunning:
-		return serialize.Ok(code.SpaceOtherSpaceIsRunning)
+		return serialize.Fail(code.SpaceOtherSpaceIsRunning)
 	case service.ErrSpaceNotFound:
-		return serialize.Ok(code.SpaceNotFound)
+		return serialize.Fail(code.SpaceNotFound)
 	}
 
 	if err != nil {
-		return serialize.Ok(code.SpaceStartFailed)
+		return serialize.Fail(code.SpaceStartFailed)
 	}
 
-	return serialize.FailWithData(code.SpaceStartSuccess, space)
+	return serialize.OkData(space)
 }
 
-// StopSpace 停止正在运行的云空间 method: PUT path: /api/space_stop
+// StopSpace 停止正在运行的云空间 method: PUT path: /api/workspace/stop
 // Request Param: sid
 func (c *CloudCodeController) StopSpace(ctx *gin.Context) *serialize.Response {
-	var req struct {
-		Sid string `json:"sid"`
-	}
+	var req reqtype.SpaceId
 	err := ctx.ShouldBind(&req)
 	if err != nil {
-		c.logger.Warningf("bind param error:%v", err)
-		ctx.Status(http.StatusBadRequest)
-		return nil
-	}
-	uidi, ok := ctx.Get("uid")
-	if !ok {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		c.logger.Warnf("bind param error:%v", err)
+		return serialize.Error(http.StatusBadRequest)
 	}
 
-	uid := uidi.(string)
-	err = c.spaceService.StopWorkspace(req.Sid, uid)
+	uid := utils.MustGet[string](ctx, "uid")
+	userId := utils.MustGet[uint32](ctx, "id")
+
+	err = c.spaceService.StopWorkspace(req.Id, userId, uid)
 	if err != nil {
 		if err == service.ErrWorkSpaceIsNotRunning {
-			return serialize.Ok(code.SpaceStopIsNotRunning)
+			return serialize.Ok()
 		}
 
-		return serialize.Ok(code.SpaceStopFailed)
+		return serialize.Fail(code.SpaceStopFailed)
 	}
 
-	return serialize.Ok(code.SpaceStopSuccess)
+	return serialize.Ok()
 }
 
-// DeleteSpace 删除已存在的云空间  method: DELETE path: /api/delete
+// DeleteSpace 删除已存在的云空间  method: DELETE path: /api/workspace
 // Request Param: id
 func (c *CloudCodeController) DeleteSpace(ctx *gin.Context) *serialize.Response {
-	id, err := utils.QueryUint32(ctx, "id")
+	var req reqtype.SpaceId
+	err := ctx.ShouldBind(&req)
 	if err != nil {
-		c.logger.Warningf("get param sid failed:%v", err)
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		c.logger.Warnf("bind param error:%v", err)
+		return serialize.Error(http.StatusBadRequest)
 	}
-	c.logger.Debug("id:", id)
+	c.logger.Debug("space id:", req.Id)
 
-	uidi, ok := ctx.Get("uid")
-	if !ok {
-		ctx.Status(http.StatusBadRequest)
-		return nil
-	}
+	// 获取用户id和用户uid
+	userId := utils.MustGet[uint32](ctx, "id")
+	uid := utils.MustGet[string](ctx, "uid")
 
-	uid := uidi.(string)
-	err = c.spaceService.DeleteWorkspace(id, uid)
+	err = c.spaceService.DeleteWorkspace(req.Id, userId, uid)
 	if err != nil {
 		if err == service.ErrWorkSpaceIsRunning {
-			return serialize.Ok(code.SpaceDeleteIsRunning)
+			return serialize.Fail(code.SpaceDeleteIsRunning)
 		}
 
-		return serialize.Ok(code.SpaceDeleteFailed)
+		return serialize.Fail(code.SpaceDeleteFailed)
 	}
 
-	return serialize.Ok(code.SpaceDeleteSuccess)
+	return serialize.Ok()
 }
 
-// ListSpace 获取所有创建的云空间 method: GET path: /api/spaces
+// ListSpace 获取所有创建的云空间 method: GET path: /api/workspace/list
 // Request param: id uid
 func (c *CloudCodeController) ListSpace(ctx *gin.Context) *serialize.Response {
-	v1, e1 := ctx.Get("id")
-	v2, e2 := ctx.Get("uid")
-	if !e1 || !e2 {
-		ctx.Status(http.StatusBadRequest)
-		return nil
-	}
-	id := v1.(uint32)
-	uid := v2.(string)
+	userId := utils.MustGet[uint32](ctx, "id")
+	uid := utils.MustGet[string](ctx, "uid")
 
-	spaces, err := c.spaceService.ListWorkspace(id, uid)
+	spaces, err := c.spaceService.ListWorkspace(userId, uid)
 	if err != nil {
-		return serialize.Ok(code.QueryFailed)
+		return serialize.Fail(code.QueryFailed)
 	}
 
-	return serialize.FailWithData(code.QuerySuccess, spaces)
+	return serialize.OkData(spaces)
 }
 
-// ModifySpaceName 修改工作空间名称 method: POST path: /api/space_name
+// ModifySpaceName 修改工作空间名称 method: POST path: /api/workspace/name
 func (c *CloudCodeController) ModifySpaceName(ctx *gin.Context) *serialize.Response {
 	var req struct {
 		Name string `json:"name"` // 新的工作空间的名称
@@ -268,22 +241,18 @@ func (c *CloudCodeController) ModifySpaceName(ctx *gin.Context) *serialize.Respo
 	err := ctx.ShouldBind(&req)
 	if err != nil {
 		c.logger.Warnf("bind req error:%v", err)
-		return serialize.Ok(code.SpaceNameModifyFailed)
-	}
-	v1, e1 := ctx.Get("id")
-	if !e1 {
-		ctx.Status(http.StatusBadRequest)
-		return nil
+		return serialize.Fail(code.SpaceNameModifyFailed)
 	}
 
-	userId := v1.(uint32)
+	userId := utils.MustGet[uint32](ctx, "id")
+
 	err = c.spaceService.ModifyName(req.Name, req.Id, userId)
 	switch err {
 	case service.ErrNameDuplicate:
-		return serialize.Ok(code.SpaceCreateNameDuplicate)
+		return serialize.Fail(code.SpaceCreateNameDuplicate)
 	case nil:
-		return serialize.Ok(code.SpaceNameModifySuccess)
+		return serialize.Ok()
 	default:
-		return serialize.Ok(code.SpaceNameModifyFailed)
+		return serialize.Fail(code.SpaceNameModifyFailed)
 	}
 }

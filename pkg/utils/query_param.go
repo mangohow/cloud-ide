@@ -40,3 +40,21 @@ func QueryUint32(ctx *gin.Context, key string) (uint32, error) {
 		return uint32(n), nil
 	}
 }
+
+func Get[T any](ctx *gin.Context, key string) (t T, ok bool) {
+	value, exists := ctx.Get(key)
+	if !exists {
+		return
+	}
+
+	t, ok = value.(T)
+	return t, ok
+}
+
+func MustGet[T any](ctx *gin.Context, key string) (t T) {
+	v, ok := Get[T](ctx, key)
+	if !ok {
+		panic("get value failed")
+	}
+	return v
+}

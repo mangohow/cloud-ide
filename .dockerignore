@@ -4,3 +4,7 @@ build
 
 .idea
 
+front-end/node_modules
+front-end/.idea
+front-end/dist
+front-end/yarn.lock

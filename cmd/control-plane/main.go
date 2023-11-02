@@ -25,7 +25,6 @@ import (
 	"github.com/mangohow/cloud-ide/cmd/control-plane/internal/service"
 	"github.com/mangohow/cloud-ide/pkg/notifier"
 	"github.com/mangohow/cloud-ide/pkg/proc"
-
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -84,6 +83,8 @@ func main() {
 	flag.StringVar(&controllers.StorageClassName, "storage-class-name", "nfs-csi", "specify storage class name if dynamic-storage-enabled enabled")
 	// 指定是否启用动态卷制备
 	flag.BoolVar(&controllers.DynamicStorageEnabled, "dynamic-storage-enabled", false, "specify dynamic storage enabled")
+	// 指定用于克隆git的初始化容器镜像
+	flag.StringVar(&controllers.GitClonerName, "git-cloner-image", "git-cloner", "specify git cloner images")
 
 	opts := zap.Options{
 		Development: true,

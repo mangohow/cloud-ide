@@ -126,8 +126,8 @@ func (c *CloudCodeService) checkHasRunningWorkspace(uid string) (bool, error) {
 		c.logger.Errorf("get running workspaces err=%v", err)
 		return true, err
 	}
-
-	if len(wss.Workspaces) > 1 {
+	c.logger.Debug("running workspaces:", wss.Workspaces)
+	if len(wss.Workspaces) > 0 {
 		return true, nil
 	}
 
@@ -321,9 +321,9 @@ var (
 )
 
 // DeleteWorkspace 删除云工作空间
-func (c *CloudCodeService) DeleteWorkspace(id uint32, uid string) error {
-	// 1、先查询工作空间
-	space, err := c.dao.FindSidAndStatusById(id)
+func (c *CloudCodeService) DeleteWorkspace(id, userId uint32, uid string) error {
+	// 1、先查询工作空间并确保该工作空间是属于该用户的
+	space, err := c.dao.FindByIdAndUserId(id, userId)
 	if err != nil {
 		c.logger.Warnf("find sid error:%v", err)
 		return err
@@ -334,7 +334,7 @@ func (c *CloudCodeService) DeleteWorkspace(id uint32, uid string) error {
 		if err != nil {
 			return ErrSpaceDelete
 		}
-		return ErrOtherSpaceIsRunning
+		return ErrWorkSpaceIsRunning
 	}
 
 	// 3、通知controller删除该workspace关联的资源
@@ -354,18 +354,31 @@ func (c *CloudCodeService) DeleteWorkspace(id uint32, uid string) error {
 }
 
 // StopWorkspace 停止云工作空间
-func (c *CloudCodeService) StopWorkspace(sid, uid string) error {
-	// 1、查询云工作空间是否正在运行并删除数据
-	if ok, err := c.checkHasRunningWorkspace(uid); err != nil || !ok {
-		if err != nil {
-			return ErrSpaceStop
-		}
+func (c *CloudCodeService) StopWorkspace(id, userId uint32, uid string) error {
+	c.logger.Debugf("StopWorkspace, sid: %d, uid: %s", id, uid)
+
+	// 1、检测该工作空间是否属于该用户
+	// TODO 可优化的点，使用redis缓存用户工作空间
+	space, err := c.dao.FindByIdAndUserId(id, userId)
+	if err != nil {
+		c.logger.Warnf("find sid error:%v", err)
+		return err
+	}
+
+	// 2、查询云工作空间是否正在运行
+	ok, err := c.checkHasRunningWorkspace(uid)
+	if err != nil {
+		c.logger.Errorf("get running workspace err=%v, sid=%d", err, id)
+		return ErrSpaceStop
+	}
+	if !ok {
+		c.logger.Debug("workspace is not running, sid:", id)
 		return ErrWorkSpaceIsNotRunning
 	}
 
-	// 2、停止workspace
-	_, err := c.rpc.StopSpace(context.Background(), &pb.RequestStop{
-		Sid: sid,
+	// 3、停止workspace
+	_, err = c.rpc.StopSpace(context.Background(), &pb.RequestStop{
+		Sid: space.Sid,
 		Uid: uid,
 	})
 	if err != nil {

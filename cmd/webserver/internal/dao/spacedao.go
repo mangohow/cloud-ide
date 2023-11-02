@@ -51,14 +51,6 @@ func (d *SpaceDao) FindAllSpaceByUserId(userId uint32) (spaces []model.Space, er
 	return
 }
 
-func (d *SpaceDao) FindSidAndStatusById(id uint32) (space *model.Space, err error) {
-	sql := `SELECT sid, status FROM t_space WHERE id = ?`
-	space = &model.Space{}
-	err = d.db.Get(space, sql, id)
-
-	return
-}
-
 func (d *SpaceDao) DeleteSpaceById(id uint32) error {
 	// 不真正的删除，给其状态设置为已删除，待以后再删除
 	sql := `UPDATE t_space SET status = ? WHERE id = ?`

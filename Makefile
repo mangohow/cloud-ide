@@ -41,7 +41,7 @@ help: ## Display this help.
 
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./cmd/control-plane/..." output:crd:artifacts:config=manifests/control-plane/crd/bases
+	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./cmd/control-plane/..." output:crd:artifacts:config=manifests/control-plane/crd/bases output:dir=manifests/control-plane/rbac
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.

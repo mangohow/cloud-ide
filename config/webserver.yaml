@@ -5,7 +5,7 @@ server:
   mode: "dev"
 
 mysql:
-  dataSourceName: "root:123456@@@(127.0.0.1:30306)/cloudcode?charset=utf8mb4&parseTime=true&loc=Local"
+  dataSourceName: "root:123456@(127.0.0.1:30306)/cloudide?charset=utf8mb4&parseTime=true&loc=Local"
   maxOpenConns: 20
   maxIdleConns: 10
 

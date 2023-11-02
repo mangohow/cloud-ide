@@ -11,27 +11,27 @@ func Register(engine *gin.Engine) {
 	authGroup := engine.Group("/auth")
 	userController := controller.NewUserController()
 	{
-		authGroup.POST("/login", router.Decorate(userController.Login))
-		authGroup.GET("/username/check", router.Decorate(userController.CheckUsernameAvailable))
-		authGroup.POST("/register", router.Decorate(userController.Register))
-		authGroup.GET("/emailCode", router.Decorate(userController.GetEmailValidateCode))
+		authGroup.POST("/login", router.HandlerAdapter(userController.Login))
+		authGroup.GET("/username/check", router.HandlerAdapter(userController.CheckUsernameAvailable))
+		authGroup.POST("/register", router.HandlerAdapter(userController.Register))
+		authGroup.GET("/emailCode", router.HandlerAdapter(userController.GetEmailValidateCode))
 	}
 
 	apiGroup := engine.Group("/api", middleware.Auth())
 	tmplController := controller.NewSpaceTmplController()
 	{
-		apiGroup.GET("/template/list", router.Decorate(tmplController.SpaceTmpls))
-		apiGroup.GET("/spec/list", router.Decorate(tmplController.SpaceSpecs))
+		apiGroup.GET("/template/list", router.HandlerAdapter(tmplController.SpaceTmpls))
+		apiGroup.GET("/spec/list", router.HandlerAdapter(tmplController.SpaceSpecs))
 	}
 
 	spaceController := controller.NewCloudCodeController()
 	{
-		apiGroup.GET("/workspace/list", router.Decorate(spaceController.ListSpace))
-		apiGroup.DELETE("/workspace", router.Decorate(spaceController.DeleteSpace))
-		apiGroup.POST("/workspace", router.Decorate(spaceController.CreateSpace))
-		apiGroup.POST("/workspace/cas", router.Decorate(spaceController.CreateSpaceAndStart))
-		apiGroup.PUT("/workspace/start", router.Decorate(spaceController.StartSpace))
-		apiGroup.PUT("/workspace/stop", router.Decorate(spaceController.StopSpace))
-		apiGroup.PUT("/workspace/name", router.Decorate(spaceController.ModifySpaceName))
+		apiGroup.GET("/workspace/list", router.HandlerAdapter(spaceController.ListSpace))
+		apiGroup.DELETE("/workspace", router.HandlerAdapter(spaceController.DeleteSpace))
+		apiGroup.POST("/workspace", router.HandlerAdapter(spaceController.CreateSpace))
+		apiGroup.POST("/workspace/cas", router.HandlerAdapter(spaceController.CreateSpaceAndStart))
+		apiGroup.PUT("/workspace/start", router.HandlerAdapter(spaceController.StartSpace))
+		apiGroup.PUT("/workspace/stop", router.HandlerAdapter(spaceController.StopSpace))
+		apiGroup.PUT("/workspace/name", router.HandlerAdapter(spaceController.ModifySpaceName))
 	}
 }

@@ -269,7 +269,7 @@ func (r *WorkSpaceReconciler) constructPod(space *mv1.WorkSpace) *v1.Pod {
 	pod.Spec.InitContainers = []v1.Container{
 		{
 			Name:            "git-cloner",
-			Image:           "registry.cn-hangzhou.aliyuncs.com/mangohow-apps/git-cloner:v1.0",
+			Image:           GitClonerName,
 			WorkingDir:      space.Spec.MountPath,
 			ImagePullPolicy: v1.PullIfNotPresent,
 			// 容器挂载存储卷
