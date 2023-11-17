@@ -27,21 +27,31 @@ func NewUserService(service EmailService) *UserService {
 	}
 }
 
-var ErrUserDeleted = errors.New("user deleted")
+var (
+	ErrUserDeleted       = errors.New("user deleted")
+	ErrUserNotExist      = errors.New("user not exist")
+	ErrPasswordIncorrect = errors.New("password incorrect")
+)
 
 func (u *UserService) Login(username, password string) (*model.User, error) {
 	// 1、从数据库中查询
-	user, err := u.dao.FindByUsernameAndPassword(username, password)
+	user, err := u.dao.FindByUsernameDetailed(username)
 	if err != nil {
-		return nil, err
+		return nil, ErrUserNotExist
 	}
 
-	// 2、检查用户状态是否正常
+	// 2、验证密码
+	ok := encrypt.VerifyPasswd(password, user.Password)
+	if !ok {
+		return nil, ErrPasswordIncorrect
+	}
+
+	// 3、检查用户状态是否正常
 	if code.UserStatus(user.Status) == code.StatusDeleted {
 		return nil, ErrUserDeleted
 	}
 
-	// 3、生成token
+	// 4、生成token
 	token, err := encrypt.CreateToken(user.Id, user.Username, user.Uid)
 	if err != nil {
 		return nil, err
@@ -79,12 +89,14 @@ func (u *UserService) UserRegister(info *model.RegisterInfo) error {
 		return ErrEmailAlreadyInUse
 	}
 
+	encryptedPasswd := encrypt.PasswdEncrypt(info.Password)
+
 	// 3.生成新的用户
 	now := time.Now()
 	user := &model.User{
 		Uid:        bson.NewObjectId().Hex(),
 		Username:   info.Username,
-		Password:   info.Password,
+		Password:   encryptedPasswd,
 		Nickname:   info.Nickname,
 		Email:      info.Email,
 		CreateTime: now,

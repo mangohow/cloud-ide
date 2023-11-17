@@ -16,10 +16,10 @@ func NewUserDao() *UserDao {
 	}
 }
 
-func (u *UserDao) FindByUsernameAndPassword(username, password string) (user *model.User, _ error) {
-	sql := `SELECT id, uid, username, nickname, email, avatar, status FROM t_user WHERE username = ? AND password = ?`
+func (u *UserDao) FindByUsernameDetailed(username string) (user *model.User, _ error) {
+	sql := `SELECT id, uid, username, password, nickname, email, avatar, status FROM t_user WHERE username = ?`
 	user = &model.User{}
-	err := u.db.Get(user, sql, username, password)
+	err := u.db.Get(user, sql, username)
 	return user, err
 }
 

@@ -9,6 +9,8 @@ const (
 	LoginSuccess
 	LoginFailed
 	LoginUserDeleted
+	LoginUserNotExist
+	LoginPasswordIncorrect
 
 	SpaceCreateSuccess
 	SpaceCreateFailed
@@ -61,6 +63,8 @@ var messageForCode = map[int]string{
 	LoginSuccess:                "登录成功",
 	LoginFailed:                 "登录失败",
 	LoginUserDeleted:            "用户已注销",
+	LoginUserNotExist:           "该用户不存在",
+	LoginPasswordIncorrect:      "密码错误",
 	SpaceCreateSuccess:          "创建成功",
 	SpaceCreateFailed:           "创建失败",
 	SpaceCreateNameDuplicate:    "不能和已有工作空间名称重复",

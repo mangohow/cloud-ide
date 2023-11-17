@@ -1,6 +1,8 @@
 #!/bin/bash 
 
 
+BUILD=true
+
 function graceful_exit () {
     echo "receive SIGTERM, exiting..."
     pid=$(ps -ef | grep code-server | awk '{print $2}')
@@ -23,14 +25,25 @@ while :;do
         mkdir -p $USER_WORKSPACE
     fi
 
-    # 第一次启动工作空间,拷贝code-server的数据
-    if [ ! -f "/user_data/.local/share/.first_start" ]; then
-        echo "copy code-server"
-        if [ ! -d "/user_data/.local/share" ]; then
-            mkdir -p /user_data/.local/share
+    # 构建阶段
+    if [ "$BUILD" = true ]; then
+        # 生成zsh配置
+        chsh -s /bin/zsh
+        sh -c ./install.sh
+        rm -f install.sh
+
+        sed -i 's/BUILD=true/BUILD=false/' .init.sh
+    else
+        # 第一次启动工作空间,拷贝code-server的数据
+        if [ ! -f "/root/.do_not_delete" ]; then
+            echo "copy code-server"
+            mv /.workspace/code-server-config.tar.gz /root
+            cd /root
+            tar zxvf code-server-config.tar.gz > /dev/null
+            rm -f code-server-config.tar.gz
+            touch /root/.do_not_delete
+            cd -
         fi
-        cp -r /root/.local/share/code-server-bak /user_data/.local/share/code-server
-        touch /user_data/.local/share/.first_start
     fi
 
     # 启动code-server
@@ -38,12 +51,10 @@ while :;do
     if [ -z "$node_id" ]; then
         nohup code-server --port 9999 --host 0.0.0.0 \
         --auth none --disable-update-check  --locale zh-cn \
-        --user-data-dir /user_data/.local/share/code-server \
-        --extensions-dir /user_data/.local/share/code-server/extensions \
         --open "$OPEN_DIR" &
 
         echo "start code-server success"
     fi
 
-    sleep 3
+    sleep 5
 done

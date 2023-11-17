@@ -177,7 +177,7 @@ func (c *CloudCodeService) createAndStartWorkspace(space *model.Space, uid strin
 		Image:           tmpl.Image,
 		Port:            DefaultPodPort,
 		GitRepository:   space.GitRepository,
-		VolumeMountPath: "/user_data/",
+		VolumeMountPath: "/root/",
 		ResourceLimit: &pb.ResourceLimit{
 			Cpu:     spec.CpuSpec,
 			Memory:  spec.MemSpec,

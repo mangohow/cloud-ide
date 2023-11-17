@@ -24,3 +24,6 @@ front-end/*.ntvs*
 front-end/*.njsproj
 front-end/*.sln
 front-end/*.sw?
+
+build/workspace-templates/code-server
+build/workspace-templates/fonts

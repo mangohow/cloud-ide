@@ -60,8 +60,13 @@ func (u *UserController) Login(ctx *gin.Context) *serialize.Response {
 
 	user, err := u.service.Login(userInfo.Username, userInfo.Password)
 	if err != nil {
-		if err == service.ErrUserDeleted {
+		switch err {
+		case service.ErrUserDeleted:
 			return serialize.Fail(code.LoginUserDeleted)
+		case service.ErrUserNotExist:
+			return serialize.Fail(code.LoginUserNotExist)
+		case service.ErrPasswordIncorrect:
+			return serialize.Fail(code.LoginPasswordIncorrect)
 		}
 
 		u.logger.Warnf("login error:%v", err)

@@ -67,9 +67,9 @@ CREATE TABLE `t_space_template`  (
 -- ----------------------------
 -- Records of t_space_template
 -- ----------------------------
-INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go1.19:v1.1', 0, 'images/go.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
+INSERT INTO `t_space_template` VALUES (1, 1, 'Go', 'go workspace with go 1.21.3, make', 'Go,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-go:v1.21', 0, 'images/go.png', '2022-12-08 16:53:45', '2022-12-08 16:53:47');
 INSERT INTO `t_space_template` VALUES (2, 1, 'Node.js', 'js workspace', 'Node.js', 'node.js', 0, 'images/nodejs.png', '2022-12-11 21:18:22', '2022-12-11 21:18:24');
-INSERT INTO `t_space_template` VALUES (3, 1, 'C/C++', 'c/c++ workspace with gcc g++ make cmake git', 'C,CPP,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-cpp:v1.1', 0, 'images/cpp.png', '2022-12-11 22:40:28', '2022-12-11 22:40:30');
+INSERT INTO `t_space_template` VALUES (3, 1, 'C/C++', 'c/c++ workspace with gcc g++ make cmake git', 'C,CPP,Make,Git', 'registry.cn-hangzhou.aliyuncs.com/k8s-cloud-ide/code-server-cxx:v1.0', 0, 'images/cpp.png', '2022-12-11 22:40:28', '2022-12-11 22:40:30');
 INSERT INTO `t_space_template` VALUES (4, 1, 'Java', 'java workspace', 'Java', 'java', 0, 'images/java.png', '2023-02-26 16:56:43', '2023-02-26 16:57:33');
 INSERT INTO `t_space_template` VALUES (5, 1, 'Vue', 'Vue workspace', 'Vue,Yarn', 'Vue', 0, 'images/vue.png', '2023-02-26 17:05:18', '2023-02-26 17:05:20');
 INSERT INTO `t_space_template` VALUES (6, 1, 'Python', 'python workspace', 'Python', 'Python', 0, 'images/python.png', '2023-02-26 17:05:45', '2023-02-26 17:05:48');
@@ -119,7 +119,7 @@ CREATE TABLE `t_user`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键Id',
   `uid` char(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'uid,使用mongodb的_id方式生成',
   `username` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
+  `password` varchar(48) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
   `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '昵称',
   `email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '邮箱',
   `phone` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '手机号',
@@ -128,7 +128,7 @@ CREATE TABLE `t_user`  (
   `delete_time` datetime(0) NOT NULL COMMENT '删除时间',
   `status` int(0) NOT NULL COMMENT '状态 0 可用 1 已注销',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `idx_username_password`(`username`, `password`) USING BTREE COMMENT '用户名、密码索引',
+  UNIQUE INDEX `idx_username`(`username`) USING BTREE COMMENT '用户名索引',
   UNIQUE INDEX `idx_email`(`email`) USING BTREE COMMENT '邮箱索引',
   UNIQUE INDEX `idx_uid`(`uid`) USING BTREE COMMENT 'uid索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
